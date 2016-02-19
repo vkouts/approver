@@ -1,0 +1,135 @@
+.navbar-inverse .navbar-inner {
+    background-image: linear-gradient(to bottom, #0062ad, #0081c2);
+}
+
+.navbar-inverse .brand {
+    color: #FFFFFF;
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav > li > a {
+    color: #FFFFFF;
+}
+
+.navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle {
+    background-color: #0457ad;
+}
+
+.published {
+    color: #7e7e7e;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.post a.post_title:link {
+    color: #444;
+}
+.post a.post_title:visited {
+    color: #b5b5b5;
+}
+.post a.post_title:hover {
+    color: #a3a3a3;
+}
+.post a.post_title:active {
+    color: #666;
+}
+
+[class^="myglyphicon-"]{
+   display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-top: 10px;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("/static/bootstrap/img/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+}
+
+.myglyphicon-pencil {
+    background-position: 0 -72px;
+}
+
+.myglyphicon-trash {
+    background-position: -456px 0;
+}
+
+.myglyphicon-edit {
+    background-position: -96px -72px;
+    margin-top: 1px;
+}
+
+.myglyphicon-file {
+    background-position: -24px -24px;
+    margin-top: 1px;
+}
+
+.myglyphicon-zoom-in {
+    background-position: -336px 0px;
+    margin-top: 1px;
+}
+
+.myglyphicon-play {
+    background-position: -264px -72px;
+    margin-top: 1px;
+}
+
+.myglyphicon-pause {
+    background-position: -288px -72px;
+    margin-top: 1px;
+}
+
+.myglyphicon-arrow-left {
+    background-position: -240px -96px;
+    margin-top: 7px;
+}
+
+.myglyphicon-arrow-right {
+    background-position: -264px -96px;
+    margin-top: 7px;
+}
+
+
+.oversizetext {
+    white-space: nowrap; /* Отменяем перенос текста */
+    overflow: hidden; /* Обрезаем содержимое */
+    padding: 5px; /* Поля */
+    text-overflow: ellipsis; /* Многоточие */
+   }
+
+.oversizetext:hover {
+    background: #f0f0f0; /* Цвет фона */
+    white-space: normal; /* Обычный перенос текста */
+   }
+
+.panel-heading {
+    padding: 3px 15px;
+}
+
+.panel-footer {
+    padding: 3px 15px;
+}
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+     background-color: #FBFBFF;
+    }
+    .page-wrapper {
+        min-height: 100%;
+        margin-bottom: -50px;
+    }
+    * html .page-wrapper {
+        height: 100%;
+    }
+    .page-buffer {
+        height: 50px;
+    }
+    footer {
+        background-color: #666666;
+    }
+      .muted {
+    color: #ffffff;
+    font-weight: 600;
+      }

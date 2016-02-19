@@ -1,0 +1,87 @@
+{% extends 'main_layout.html' %}
+{% load perm_checker %}
+{% block addhead %}
+<style>
+    .main_blk {
+        padding: 30px 30px 10px 30px;
+    }
+    .main_buttons {
+        width: 350px;
+    }
+</style>
+{% endblock %}
+{% block main %}
+    {#  ==================  ЗАГЛАВНОЕ МЕНЮ  ========================== #}
+    {#  ----------  Кредитчику показываем кнопки "Новые кредиты" и "Мои кредиты" ----------  #}
+    {% if request.user|has_group:settings.CREATOR_GROUP %}
+        <div class="row main_blk">
+            <form action="{% url 'kredit_request' %}">
+                <button class="btn btn-lg btn-danger main_buttons" >Новая кредитная заявка</button>
+            </form>
+        </div>
+
+        <div class="row main_blk">
+            <form action="{% url 'my_kredits' %}">
+                <button class="btn btn-lg btn-primary main_buttons">Мои кредитные заявки</button>
+            </form>
+        </div>
+
+    {% endif %}
+    {# -------------- Добавляем права просмотра кредитчику с админскими правами всех заявок ---- #}
+    {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}
+        <div class="row main_blk">
+            <form action="{% url 'list_kredits' %}">
+                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
+            </form>
+        </div>
+    {% endif %}
+    {#  --------------------------------   Согласователям  --------------------------- #}
+    {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
+        <div class="row main_blk">
+            <form action="{% url 'group_kredits' %}">
+                <button type="button" class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
+            </form>
+        </div>
+
+        <div class="row main_blk">
+            <form action="{% url 'my_kredits' %}">
+                <button class="btn btn-lg btn-info main_buttons">Мои рассмотрения</button>
+            </form>
+        </div>
+
+        <div class="row main_blk">
+            <form action="{% url 'list_kredits' %}">
+                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
+            </form>
+        </div>
+
+    {% endif %}
+
+    {#  --------------------------------   Права просмотра ДБ   ---------------------------------- #}
+    {% if request.user|is_security_approver %}
+        <div class="row main_blk">
+            <form action="{% url 'group_kredits' %}">
+                <button class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
+            </form>
+        </div>
+        <div class="row main_blk">
+            <form action="{% url 'list_kredits' %}">
+                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
+            </form>
+        </div>
+    {% endif %}
+    {#  --------------------------------   Права просмотра статистики  --------------------------- #}
+    {% if request.user|has_group:settings.MASTER_APPROVER %}
+        <div class="row main_blk">
+            <form action="/stats/approvers/">
+                <button class="btn btn-lg btn-black main_buttons">Статистика по пользователям</button>
+            </form>
+        </div>
+    {% endif %}
+    {#  --------------------------------   Тут блок для безопасников  --------------------------- #}
+    {% if request.user|is_security_approver %}
+
+
+    {% endif %}
+
+{% endblock %}
