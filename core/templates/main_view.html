@@ -30,7 +30,7 @@
     {# -------------- Добавляем права просмотра кредитчику с админскими правами всех заявок ---- #}
     {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}
         <div class="row main_blk">
-            <form action="{% url 'list_kredits' %}">
+            <form action="{% url 'kredit_list' %}">
                 <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
             </form>
         </div>
@@ -38,8 +38,8 @@
     {#  --------------------------------   Согласователям  --------------------------- #}
     {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
         <div class="row main_blk">
-            <form action="{% url 'group_kredits' %}">
-                <button type="button" class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
+            <form action="{% url 'by_group' %}">
+                <button class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
             </form>
         </div>
 
@@ -50,7 +50,7 @@
         </div>
 
         <div class="row main_blk">
-            <form action="{% url 'list_kredits' %}">
+            <form action="{% url 'kredit_list' %}">
                 <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
             </form>
         </div>

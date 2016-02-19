@@ -1,0 +1,78 @@
+{% extends 'main_layout.html' %}
+{% load perm_checker %}
+
+{% block addhead %}
+    <style>
+        .kredit_status_D { color: red; font-weight: bold; }
+        .kredit_status_A { color: green; font-weight: bold; }
+        .kredit_status_R { color: #0000ff; font-weight: bold; }
+        .kredit_status_F { color: DarkViolet; font-weight: bold; }
+        .kredit_status_C { color: DarkViolet; font-weight: bold; }
+        #xls_output { display: none; }
+    </style>
+{% endblock %}
+
+{% block main %}
+        <div class="row">
+        <div class="col-lg-12">
+            <h3>Кредиты на оформлении</h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <th>ID</th>
+                        <th>Дата</th>
+                        <th>ФИО</th>
+                        <th>Сумма</th>
+                        <th>Пакет документов</th>
+                        <th>Тип кредита</th>
+                        <th>Статус</th>
+                        <th>Уровень</th>
+                        {% if request.user|has_group:settings.CREATOR_GROUP %}
+                        {% else %}
+                        <th>Автор статуса</th>
+                        {% endif %}
+                    </thead>
+                    {% for kred in object_list %}
+                    <tr>
+                        <!-- td>{{ kred.creation_datre|timesince }}</td -->
+                        <td>{{ kred.id }}</td>
+                        <td>{{ kred.creation_date|date:"d.m.Y" }}</td>
+                        <td><a href="{% url 'kredit_detail' pk=kred.id %}">{{ kred.surname }} {{ kred.name }} {{ kred.secondname }}</a></td>
+                        <td>{{ kred.sum|floatformat:2 }}</td>
+                        <td>{{ kred.get_doc_complect_display }}</td>
+                        <td>{{ kred.get_kred_mode_display }}</td>
+                        <td class="kredit_status_{{ kred.status }}">{{ kred.get_status_display }}</td>
+                        <td>{{ kred.cur_route.stage }}</td>
+                        {% if request.user|has_group:settings.CREATOR_GROUP %}
+                        {% else %}
+                        <td>{{ kred.cur_route.cur_user }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% if is_paginated %}
+            <ul class="pagination pagination-sm">
+                <li>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Пред.</a>
+                {% endif %}
+                </li>
+
+                <li><a href="#">стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</a></li>
+
+                <li>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">След.</a>
+                {% endif %}
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block more_scripts %}
+
+{% endblock %}
