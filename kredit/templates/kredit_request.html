@@ -1,10 +1,71 @@
 {% extends 'main_layout.html' %}
+{% load i18n %}
 
 {% block addhead %}
-
+    {{ form.media }}
+    {{ form2.media }}
 {% endblock %}
 
 {% block main %}
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{% trans "Add new credit request" %}</h3>
+                    <hr />
+        </div>
+    </div>
+    <form class="form-horizontal" action="#" method="POST" id="KredForm">
+        {% csrf_token %}
+            {{ form.sess }}
+            <div class="form-group">
+                <label class="col-md-2 control-label">{{ form.office.label }}</label>
+                <div class="col-md-4">{{ form.office }}</div>
+                <label class="col-md-2 control-label">{{ form.kred_mode.label }}</label>
+                <div class="col-md-4">{{ form.kred_mode }}</div>
+
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">{{ form.name.label }}</label>
+                <div class="col-md-4">{{ form.name }}</div>
+                <label class="col-md-2 control-label">{{ form.doc_complect.label }}</label>
+                <div class="col-md-4">{{ form.doc_complect }}</div>
+            </div>
+             <div class="form-group">
+                 <label class="col-md-2 control-label">{{ form.surname.label }}</label>
+                 <div class="col-md-4">{{ form.surname }}</div>
+                 <label class="col-md-2 control-label">{{ form.sum.label }}</label>
+                 <div class="col-md-4">{{ form.sum }}</div>
+            </div>
+             <div class="form-group">
+                 <label class="col-md-2 control-label">{{ form.secondname.label }}</label>
+                 <div class="col-md-4">{{ form.secondname }}</div>
+                 <label class="col-md-2 control-label">{{ form.kred_link.label }}</label>
+                 <div class="col-md-4">{{ form.kred_link }}</div>
+            </div>
+             <div class="form-group">
+                 <label class="col-md-2 control-label">{{ form.kred_comment.label }}</label>
+                 <div class="col-md-10">{{ form.kred_comment }}</div>
+            </div>
+    </form>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+             <form action="#"  method="POST" class="dropzone" id="my-dropzone" >
+                 {% csrf_token %}
+                 {{ form2.sess }}
+                 <div class="fallback">
+                    <div class="col-md-2 kredit-form-label">
+                        {{ form2.path_to }}
+                    </div>
+                 </div>
+            </form>
+            </div>
+        </div>
+    </div>
+     <input type="submit" class="btn btn-info btn-lg" value="{% trans 'Create' %}" form="KredForm" style="float: right;"/>
+
+
 {% endblock %}
 
 {% block more_scripts %}

@@ -1,10 +1,43 @@
 {% extends 'main_layout.html' %}
+ {% load i18n %}
 
 {% block addhead %}
 
 {% endblock %}
 
 {% block main %}
+    <div class="row">
+        <div class="col-md-6">
+            {% trans "Kredit # " %}{{ object.id }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% trans "Name: " %}{{ object.name }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% trans "Surname: " %}{{ object.surname }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% trans "Second name: " %}{{ object.secondname }}
+        </div>
+    </div>
+
+        <div class="row">
+        <div class="col-md-6">
+            {% for file in files %}
+                {{ file.path_to.name }}
+            {% endfor %}
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block more_scripts %}

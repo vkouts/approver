@@ -136,6 +136,10 @@ STATICFILES_DIRS = [
 
 ANONYMOUS_USER_ID = -1
 
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'files')
+MEDIA_URL = '/files/'
+
+
 LOG_FILE = os.path.join(BASE_DIR, 'logs', 'KreditApprover.log')
 
 LOGGING = {
@@ -208,6 +212,8 @@ LOGGING = {
         },
     }
  }
+
+UNITS_PER_PAGE = 25
 
 CREATOR_GROUP = 'kredit_user'
 ADMIN_CREATOR_GROUP = 'kredit_admin'

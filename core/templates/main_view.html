@@ -1,4 +1,5 @@
 {% extends 'main_layout.html' %}
+{% load i18n %}
 {% load perm_checker %}
 {% block addhead %}
 <style>
@@ -16,13 +17,13 @@
     {% if request.user|has_group:settings.CREATOR_GROUP %}
         <div class="row main_blk">
             <form action="{% url 'kredit_request' %}">
-                <button class="btn btn-lg btn-danger main_buttons" >Новая кредитная заявка</button>
+                <button class="btn btn-lg btn-danger main_buttons" >{% trans "New credit" %}</button>
             </form>
         </div>
 
         <div class="row main_blk">
             <form action="{% url 'my_kredits' %}">
-                <button class="btn btn-lg btn-primary main_buttons">Мои кредитные заявки</button>
+                <button class="btn btn-lg btn-primary main_buttons">{% trans "My credits" %}</button>
             </form>
         </div>
 
@@ -31,7 +32,7 @@
     {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}
         <div class="row main_blk">
             <form action="{% url 'kredit_list' %}">
-                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
+                <button class="btn btn-lg btn-warning main_buttons">{% trans "Common credits queue" %}</button>
             </form>
         </div>
     {% endif %}
@@ -39,19 +40,19 @@
     {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
         <div class="row main_blk">
             <form action="{% url 'by_group' %}">
-                <button class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
+                <button class="btn btn-lg btn-primary main_buttons">{% trans "New credits" %}</button>
             </form>
         </div>
 
         <div class="row main_blk">
             <form action="{% url 'my_kredits' %}">
-                <button class="btn btn-lg btn-info main_buttons">Мои рассмотрения</button>
+                <button class="btn btn-lg btn-info main_buttons">{% trans "My reviews" %}</button>
             </form>
         </div>
 
         <div class="row main_blk">
             <form action="{% url 'kredit_list' %}">
-                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
+                <button class="btn btn-lg btn-warning main_buttons">{% trans "Total credits queue" %}</button>
             </form>
         </div>
 

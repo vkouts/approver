@@ -78,3 +78,12 @@ class Kredit(models.Model):
     def __str__(self):
         return '{surn} {name} {second}'.format(surn=self.surname, name=self.name, second=self.secondname)
 
+
+
+class SessionFiles(models.Model):
+    sess = models.CharField(max_length=64, null=True, blank=True)
+    path_to = models.FileField(upload_to='files/%Y/%m/%d/', null=True, blank=True)
+    added = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.id)
