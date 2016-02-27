@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
 
     'core',
     'Bank',
@@ -113,7 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "ru"
 
 TIME_ZONE = 'UTC'
 
@@ -139,6 +141,14 @@ ANONYMOUS_USER_ID = -1
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'files')
 MEDIA_URL = '/files/'
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'height': 200,
+        'width': 800,
+    },
+}
 
 LOG_FILE = os.path.join(BASE_DIR, 'logs', 'KreditApprover.log')
 

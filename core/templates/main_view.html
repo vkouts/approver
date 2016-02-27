@@ -39,7 +39,7 @@
     {#  --------------------------------   Согласователям  --------------------------- #}
     {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
         <div class="row main_blk">
-            <form action="{% url 'by_group' %}">
+            <form action="{% url 'by_group' 'kredit_approver' %}">
                 <button class="btn btn-lg btn-primary main_buttons">{% trans "New credits" %}</button>
             </form>
         </div>

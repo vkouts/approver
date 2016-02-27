@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^kredit/', include('kredit.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^$', MainView.as_view(), name='main_view'),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

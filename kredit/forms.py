@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 import embedded_media as emb
 from models import Kredit, SessionFiles
+from ckeditor.widgets import CKEditorWidget
 
 __author__ = 'kvn'
 
@@ -57,4 +58,13 @@ class KreditForm(forms.ModelForm):
         self.fields['kred_link'].widget.attrs.update({'id': 'kredit_query', 'name': 'q', 'class': 'form-control'})
         self.fields['kred_mode'].widget.attrs.update({'class': 'form-control'})
         self.fields['kred_comment'].widget.attrs.update({'class': 'form-control'})
+        self.fields['sess'].required = True
+
+
+class KreditControlForm(forms.Form):
+    comment = forms.CharField(widget=CKEditorWidget())
+    sess = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(KreditControlForm, self).__init__(*args, **kwargs)
         self.fields['sess'].required = True

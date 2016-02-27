@@ -1,43 +1,246 @@
 {% extends 'main_layout.html' %}
  {% load i18n %}
+ {% load staticfiles %}
+ {% load perm_checker %}
 
 {% block addhead %}
+    {{ block.super }}
+    <style xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+        [class^="file-"]{
+            display: inline-block;
+            background:url('{% static "img/file_sprite.png" %}');
+            background-repeat: no-repeat;
+            vertical-align: text-top;
+            margin-right: 5px;
+            width: 18px;
+            height: 18px;
+        }
+        .file-folder { background:url('{% static "img/file_sprite.png" %}') right bottom no-repeat; }
+        .file { background:url('./file_sprite.png') 0 0 no-repeat; }
+        .file-pdf, .file-PDF { background-position: -18px 0 }
+        .file-as { background-position: -36px 0 }
+        .file-c { background-position: -72px -0px }
+        .file-iso { background-position: -108px -0px }
+        .file-htm, .file-html, .file-xml, .file-xsl { background-position: -126px -0px }
+        .file-cf { background-position: -162px -0px }
+        .file-cpp { background-position: -216px -0px }
+        .file-cs { background-position: -236px -0px }
+        .file-sql { background-position: -272px -0px }
+        .file-xls, .file-xlsx, .file-csv, .file-xlsm { background-position: -362px -0px }
+        .file-h { background-position: -488px -0px }
+        .file-crt, .file-pem, .file-cer { background-position: -452px -18px }
+        .file-php { background-position: -108px -18px }
+        .file-jpg, .file-jpeg, .file-png, .file-gif, .file-bmp { background-position: -126px -18px }
+        .file-ppt, .file-pptx { background-position: -144px -18px }
+        .file-rb { background-position: -180px -18px }
+        .file-text, .file-txt, .file-md, .file-log, .file-htaccess { background-position: -254px -18px;}
+        .file-doc, .file-docx { background-position: -362px -18px }
+        .file-zip, .file-gz, .file-tar, .file-rar { background-position: -416px -18px; }
+        .file-js { background-position: -434px -18px }
+        .file-css { background-position: -144px -0px }
+        .file-fla { background-position: -398px -0px }
+        .messages .warning { color: red; }
+        .messages .success { color: darkgreen; }
+        .kredit_status_D { color: red; font-weight: bold; }
+        .kredit_status_A { color: green; font-weight: bold; }
+        .my_info { margin-top: 10px; padding: 15px; color: #ffffff; font-weight: 700; }
 
+        .userf { background-color: #f2f2f2; border-color: #e4e4e4; }
+        .userfd { border-style: solid; border-width: 1px; border-color: #e4e4e4; }
+
+        .kred_data { font-size: larger; }
+        .kred_title { font-size: 16pt; font-weight: 600; }
+
+        .block-heading-two h4 span {
+            padding-bottom: 4px;
+            border-bottom: 3px solid #32c8de;
+            box-sizing: border-box;
+        }
+
+    .divider-10 {
+        border-top: 1px solid #f1f1f1;
+        border-bottom: 1px solid #e4e4e4;
+        background: #f8f8f8;
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+        padding: 2px;
+        margin: 20px 0px;
+    }
+    .box-shadow-block {
+        padding: 15px 20px;
+        border: 1px solid #eee;
+        background: #fff;
+        border-top: 2px solid #32c8de;
+    }
+    .box-shadow-outer {
+        position: relative;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .media {
+        border-left: 8px solid #32c8de;
+        padding-left: 10px;
+    }
+    .media-heading {
+        font-weight: 600;
+    }
+    .my-control {
+        padding-bottom: 5px;
+    }
+    .my-btn { width: 250px;}
+    </style>
+    {{ form.media }}
 {% endblock %}
 
 {% block main %}
-    <div class="row">
-        <div class="col-md-6">
-            {% trans "Kredit # " %}{{ object.id }}
+    <div style="padding-top:20px;"></div>
+    <div class="box-shadow-outer">
+        <div class="box-shadow-block">
+            <div class="block-heading-two" style="padding-bottom: 20px;">
+                <h4><span class="kred_title">{% trans 'Credit detail' %}</span></h4>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 kred_data"><strong>{% trans "Office " %}</strong></div>
+                <div class="col-md-4">{{ object.office }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 kred_data"><strong>{% trans "Credit specialist " %}</strong></div>
+                <div class="col-md-4">{{ object.user.first_name }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 kred_data"><strong>{% trans "Date " %}</strong></div>
+                <div class="col-md-4">{{ object.creation_date|date:"d.m.Y" }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 kred_data"><strong>{% trans "Status " %}</strong></div>
+                <div class="col-md-4">{{ object.get_status_display }}</div>
+            </div>
+
+            <div class="divider-10"></div>
+            <div class="row">
+                <div class="col-md-6 kred_title">{% trans 'Client' %}</div>
+                <div class="col-md-6 kred_title">{% trans 'Credit data' %}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 kred_data"><strong>{% trans "Credit # " %}</strong></div>
+                <div class="col-md-4">{{ object.id }}</div>
+
+                <div class="col-md-2 kred_data"><strong>{% trans "Type " %}</strong></div>
+                <div class="col-md-4">{{ object.get_kred_mode_display }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 kred_data"><strong>{% trans "Name: " %}</strong></div>
+                <div class="col-md-4">{{ object.name }}</div>
+
+                <div class="col-md-2 kred_data"><strong>{% trans "Complect " %}</strong></div>
+                <div class="col-md-4">{{ object.get_doc_complect_display }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 kred_data"><strong>{% trans "SurName: " %}</strong></div>
+                <div class="col-md-4">{{ object.surname }}</div>
+
+                <div class="col-md-2 kred_data"><strong>{% trans "Sum " %}</strong></div>
+                <div class="col-md-4">{{ object.sum }}</div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-2 kred_data"><strong>{% trans "Second Name: " %}</strong></div>
+                <div class="col-md-4">{{ object.secondname }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 kred_data"><strong>{% trans "Comment: " %}</strong></div>
+                <div class="col-md-10">{{ object.kred_comment }}</div>
+            </div>
+
+            <div class="divider-10"></div>
+            <h4>{% trans "Files" %}</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul>
+                    {% for file in files %}
+                        <li><i class="file-{{ file.extension }}"></i>
+                        <a href="/{{ file.path_to }}">{{ file.path_to.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="divider-10"></div>
+            <h4>{% trans "History" %}</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="media-list">
+                        {% for route in routes %}
+                        <li class="media" style="border-left: 8px solid {{ route.color }};">
+                            <div class="media-body">
+                                <div class="media-heading">{{ route.creation_date }}
+                                    <span style="padding-left: 20px; font-weight: 100;">{{ route.cur_user }}</span></div>
+                                <div style="font-style: italic;">{{ route.comment|safe }}</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="divider-10"></div>
+            <h4>{% trans "Control" %}</h4>
+           <div class="row">
+                <div class="col-md-3">
+                    <div class="btn-group my-control">
+                        <button type="button" class="btn btn-default  my-btn dropdown-toggle" data-toggle="dropdown">{% trans 'Transmit' %}
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">ДБ1</a></li>
+                            <li><a href="#">ДБ2</a></li>
+                            <li><a href="#">ДБ3</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="my-control"><button class="btn btn-danger my-btn"><strong>{% trans 'Decline' %}</strong></button></div>
+                    <div class="my-control"><button class="btn btn-success my-btn"><strong>{% trans 'Accept' %}</strong></button></div>
+                    <div class="my-control"><button class="btn btn-warning my-btn"><strong>{% trans 'Improve' %}</strong></button></div>
+                    <div class="my-control">
+                        <input type="submit" name="commentButton" class="btn btn-info my-btn" style="font-weight: 600;" value="{% trans 'Commenting' %}" form="credComment"/>
+                    </div>
+                </div>
+
+               <div class="col-md-9">
+                   <form method="post" action="#" id="credComment">
+                       {% csrf_token %}
+                       {{ form.sess }}
+                       {{ form.comment }}
+                   </form>
+               </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                   <form method="post" action="#" name="credFiles">
+                       {% csrf_token %}
+
+                   </form>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            {% trans "Name: " %}{{ object.name }}
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            {% trans "Surname: " %}{{ object.surname }}
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            {% trans "Second name: " %}{{ object.secondname }}
-        </div>
-    </div>
 
-        <div class="row">
-        <div class="col-md-6">
-            {% for file in files %}
-                {{ file.path_to.name }}
-            {% endfor %}
-        </div>
-    </div>
-
+    <div style="padding-top:20px;"></div>
+{#    {% if request.user|in_group:object.groups %}#}
+{#        kkkkkkkkkkkkk#}
+{#    {% endif %}#}
 {% endblock %}
 
 {% block more_scripts %}

@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-26 21:50+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\kredit\models.py:62
+msgid "Office"
+msgstr "Офис"
+
+#: .\kredit\models.py:63
+msgid "Name"
+msgstr "Имя"
+
+#: .\kredit\models.py:64
+msgid "Surname"
+msgstr "Фамилия"
+
+#: .\kredit\models.py:65
+msgid "Second Name"
+msgstr "Отчество"
+
+#: .\kredit\models.py:66
+msgid "Employee"
+msgstr "Сотрудник"
+
+#: .\kredit\models.py:67 .\kredit\templates\kredit_list.html.py:26
+msgid "Sum"
+msgstr "Сумма"
+
+#: .\kredit\models.py:68
+msgid "Complect"
+msgstr "Комплект"
+
+#: .\kredit\models.py:69
+msgid "Kredit kind"
+msgstr "Вид кредита"
+
+#: .\kredit\models.py:70
+msgid "Comment"
+msgstr "Комментарий"
+
+#: .\kredit\models.py:71
+msgid "Creation data"
+msgstr "Дата создания"
+
+#: .\kredit\models.py:72
+msgid "Kredit status"
+msgstr "Статус"
+
+#: .\kredit\models.py:73
+msgid "Link to other complect"
+msgstr "Связь с другой заявкой"
+
+#: .\kredit\models.py:74 .\kredit\templates\kredit_list.html.py:30
+msgid "Level"
+msgstr "Уровень"
+
+#: .\kredit\models.py:75
+msgid "DB status"
+msgstr "Статус ДБ"
+
+#: .\kredit\models.py:76
+msgid "DSKP status"
+msgstr "Статус ДСКП"
+
+#: .\kredit\models.py:77
+msgid "Groups"
+msgstr "Группы"
+
+#: .\kredit\models.py:79
+msgid "Session"
+msgstr "Сессия"
+
+#: .\kredit\models.py:82
+msgid "Kredit"
+msgstr "Кредит"
+
+#: .\kredit\models.py:83
+msgid "Kredits"
+msgstr "Кредиты"
+
+#: .\kredit\templates\kredit_detail.html:85
+msgid "Credit detail"
+msgstr "Данные кредита"
+
+#: .\kredit\templates\kredit_detail.html:89
+msgid "Office "
+msgstr "Офис"
+
+#: .\kredit\templates\kredit_detail.html:94
+msgid "Credit specialist "
+msgstr "Кредитный специалист"
+
+#: .\kredit\templates\kredit_detail.html:99
+msgid "Date "
+msgstr "Дата"
+
+#: .\kredit\templates\kredit_detail.html:104
+msgid "Status "
+msgstr "Статус"
+
+#: .\kredit\templates\kredit_detail.html:110
+msgid "Client"
+msgstr "Клиент"
+
+#: .\kredit\templates\kredit_detail.html:111
+msgid "Credit data"
+msgstr "Данные кредита"
+
+#: .\kredit\templates\kredit_detail.html:114
+msgid "Credit # "
+msgstr "Кредит #"
+
+#: .\kredit\templates\kredit_detail.html:117
+msgid "Type "
+msgstr "Тип "
+
+#: .\kredit\templates\kredit_detail.html:122
+msgid "Name: "
+msgstr "Имя: "
+
+#: .\kredit\templates\kredit_detail.html:125
+msgid "Complect "
+msgstr "Комплект "
+
+#: .\kredit\templates\kredit_detail.html:130
+msgid "SurName: "
+msgstr "Фамилия: "
+
+#: .\kredit\templates\kredit_detail.html:133
+msgid "Sum "
+msgstr "Сумма "
+
+#: .\kredit\templates\kredit_detail.html:139
+msgid "Second Name: "
+msgstr "Отчество: "
+
+#: .\kredit\templates\kredit_detail.html:144
+msgid "Comment: "
+msgstr "Комментарий: "
+
+#: .\kredit\templates\kredit_detail.html:149
+msgid "Files"
+msgstr "Файлы"
+
+#: .\kredit\templates\kredit_list.html:19
+msgid "Credits"
+msgstr "Кредиты"
+
+#: .\kredit\templates\kredit_list.html:24
+msgid "Date"
+msgstr "Дата"
+
+#: .\kredit\templates\kredit_list.html:25
+msgid "Full name"
+msgstr "Полное имя"
+
+#: .\kredit\templates\kredit_list.html:27
+msgid "Package"
+msgstr "Пакет"
+
+#: .\kredit\templates\kredit_list.html:28
+msgid "Cred type"
+msgstr "Тип кредита"
+
+#: .\kredit\templates\kredit_list.html:29
+msgid "Status"
+msgstr "Статус"
+
+#: .\kredit\templates\kredit_list.html:33
+msgid "Status author"
+msgstr "Автор статуса"
+
+#: .\kredit\templates\kredit_list.html:59
+msgid "Prev."
+msgstr "Пред."
+
+#: .\kredit\templates\kredit_list.html:67
+msgid "Next"
+msgstr "След."
+
+#: .\kredit\templates\kredit_request.html:12
+msgid "Add new credit request"
+msgstr "Запрос на новый кредит"
+
+#: .\kredit\templates\kredit_request.html:66
+msgid "Create"
+msgstr "Создать"
+
+msgid "New credit was created"
+msgstr "Создана новая кредитная заявка"
+
+msgid "Transmit"
+msgstr "Передать"
+
+msgid "Decline"
+msgstr "Отклонить"
+
+msgid "Accept"
+msgstr "Одобрить"
+
+msgid "Improve"
+msgstr "Отправить на доработку"
+
+msgid "Commenting"
+msgstr "Комментировать"

@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block main %}
+    {% for kredit in object_list %}
+        {{ kredit.id }}
+    {% endfor %}
+
 {% endblock %}
 
 {% block more_scripts %}

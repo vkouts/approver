@@ -5,13 +5,18 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.shortcuts import render
 from django.conf import settings
 import uuid
+from django.contrib.auth.models import User, Group
 from django.views.generic import View, TemplateView, FormView, ListView, DetailView, UpdateView, DeleteView, CreateView
-from models import Kredit, SessionFiles
+from django.views.generic.edit import FormMixin
+from django.views.generic.detail import SingleObjectMixin
+from models import Kredit, SessionFiles, KreditRoute
 from django.contrib import messages
 from core.abstract import SettingsToContext, LoginRequiredMixin
-from forms import KreditForm, SessionFilesForm
+from forms import KreditForm, SessionFilesForm, KreditControlForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
+from django.core.urlresolvers import reverse_lazy, reverse
 
 class KreditList(LoginRequiredMixin, SettingsToContext, ListView):
     template_name = 'kredit_list.html'
@@ -19,14 +24,47 @@ class KreditList(LoginRequiredMixin, SettingsToContext, ListView):
     paginate_by = settings.UNITS_PER_PAGE
 
 
-class KreditDetail(LoginRequiredMixin, DetailView):
+class KreditDetail(LoginRequiredMixin,  SingleObjectMixin, FormView):
     template_name = 'kredit_detail.html'
     model = Kredit
+    form_class = KreditControlForm
+
 
     def get_context_data(self, **kwargs):
+        self.object = self.model.objects.get(pk=self.kwargs.get('pk'))
         context = super(KreditDetail, self).get_context_data(**kwargs)
+        # self.obj = self.model.objects.get(pk=self.kwargs.get('pk'))
+        my_sess = uuid.uuid1()
         context['files'] = SessionFiles.objects.filter(sess=self.object.sess)
+        context['routes'] = KreditRoute.objects.filter(kredit=self.object).order_by('id')
+        context['settings'] = settings
+        context['form'] = KreditControlForm(initial={'sess': my_sess})
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        prev_route = self.object.get_cur_route()
+        print request.POST
+        print request.POST['commentButton']
+        my_route = KreditRoute.objects.create(
+            color='#32c8de',
+            kredit=self.object,
+            stage=prev_route.stage,
+            prev_group=prev_route.prev_group,
+            cur_group=prev_route.cur_group,
+            next_group=prev_route.next_group,
+            cur_user=request.user,
+            comment=request.POST.get('comment', ''),
+            session=request.POST.get('sess', '')
+        )
+        my_route.save()
+        return super(KreditDetail, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('kredit_detail', kwargs={'pk': self.object.pk})
+
+
+
 
 
 class KreditRequest(LoginRequiredMixin, CreateView):
@@ -51,6 +89,11 @@ class KreditRequest(LoginRequiredMixin, CreateView):
             kredit.user = request.user
             kredit.status = Kredit.STATUS_NEW
             kredit.save()
+            if kredit.doc_complect == Kredit.FIRST_COMPLECT and len(Kredit.COMPLECT1) > 1:
+                kredit.groups.add(Group.objects.get(name=Kredit.COMPLECT1[1]))
+            if kredit.doc_complect == Kredit.SECOND_COMPLECT and len(Kredit.COMPLECT2) > 1:
+                kredit.groups.add(Group.objects.get(name=Kredit.COMPLECT2[1]))
+            kredit.save()
             messages.success(request, 'Kredit data successfully saved')
             return HttpResponseRedirect(reverse_lazy('kredit_detail', kwargs={'pk': kredit.id}))
         form2 = self.form2(data=request.POST, files=request.FILES, prefix=self.form2_pref)
@@ -65,10 +108,24 @@ class MyKredits(LoginRequiredMixin, TemplateView):
     template_name = 'my_kredits.html'
 
 
-class SearchKredit(LoginRequiredMixin, TemplateView):
-    template_name = 'search_kredit.html'
+class SearchKredit(LoginRequiredMixin, ListView):
+    model = Kredit
+    template_name = 'kredit_list.html'
+    paginate_by = settings.UNITS_PER_PAGE
 
+    def get_queryset(self):
+        search_str = self.request.GET.get('searchstr', '')
+        if search_str.isdigit():
+            my_creds = self.model.objects.filter(id=search_str)
+        else:
+            my_creds = self.model.objects.filter(Q(name__istartswith=search_str)|Q(surname__istartswith=search_str))
+        return my_creds
 
-class GroupKredits(LoginRequiredMixin, TemplateView):
-    template_name = 'by_group.html'
+class GroupKredits(LoginRequiredMixin, ListView):
+    template_name = 'kredit_list.html'
+    model = Kredit
+
+    def get_queryset(self):
+        my_group = self.kwargs.get('group')
+        return self.model.objects.filter(groups__name=my_group)
 

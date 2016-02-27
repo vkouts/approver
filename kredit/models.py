@@ -1,15 +1,23 @@
 #-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from django.db import models
 from Bank.models import Office
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 
 @python_2_unicode_compatible
 class Kredit(models.Model):
+    COMPLECT1 = ['kredit_user', 'kredit_approver']
+    COMPLECT2 = ['kredit_user', 'kredit_approver', ['DB_Dagestan', 'DB_Moscow', 'DB_SKFO'], 'kredit_dskp']
+
     FIRST_COMPLECT = '1'
     SECOND_COMPLECT = '2'
     COMPLECT = (
@@ -68,8 +76,12 @@ class Kredit(models.Model):
     current_level = models.CharField(max_length=1, choices=LEVELS, default='0', verbose_name=_('Level'))
     db_status = models.CharField(max_length=1, choices=APPR_STATUS, default='0', verbose_name=_('DB status'))
     dskp_status = models.CharField(max_length=1, choices=APPR_STATUS, default='0', verbose_name=_('DSKP status'))
+    groups = models.ManyToManyField(Group, blank=True, null=True, verbose_name=_('Groups'))
 
     sess = models.CharField(max_length=64, null=True, blank=True, verbose_name=_('Session'))
+
+    def get_cur_route(self):
+        return KreditRoute.objects.filter(kredit=self).order_by('-id').last()
 
     class Meta:
         verbose_name = _('Kredit')
@@ -78,12 +90,57 @@ class Kredit(models.Model):
     def __str__(self):
         return '{surn} {name} {second}'.format(surn=self.surname, name=self.name, second=self.secondname)
 
+@python_2_unicode_compatible
+class KreditRoute(models.Model):
+    color = models.CharField(max_length=16, verbose_name=_('Color'), default="black")
+    kredit = models.ForeignKey(Kredit)
+    creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
+    stage = models.IntegerField(verbose_name=_('Stage'), default=0)
+    prev_group = models.ForeignKey(Group, related_name='kreditroute_prevgroup', null=True, blank=True,
+                                   verbose_name=_('Previous group'))
+    cur_group = models.ForeignKey(Group, related_name='kreditroute_curgroup', null=True, blank=True,
+                                  verbose_name=_('Current group'))
+    next_group = models.ForeignKey(Group, related_name='kreditroute_nextgroup', null=True, blank=True,
+                                   verbose_name=_('Next group'))
+    cur_user = models.ForeignKey(User, related_name='kreditroute_curuser', null=True, blank=True,
+                                 verbose_name=_('Current user'))
+    comment = models.TextField(verbose_name=_('Comment'), null=True, blank=True)
+    blinded_comment = models.TextField(verbose_name=_('Blinded comment'), null=True, blank=True)
+    hide_comment = models.BooleanField(verbose_name=_('Hide comment'), default=False)
+    session = models.CharField(max_length=64, null=True, blank=True)
 
+    def __str__(self):
+        return '{id}_{date}'.format(date=self.creation_date.strftime('%d.%m.%Y %H:%M'), id=self.kredit.id)
+
+    class Meta:
+        verbose_name = _('Kredit route')
+        verbose_name_plural = _('Kredit routes')
 
 class SessionFiles(models.Model):
     sess = models.CharField(max_length=64, null=True, blank=True)
     path_to = models.FileField(upload_to='files/%Y/%m/%d/', null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
 
+
+    def extension(self):
+        name, extension = os.path.splitext(self.path_to.name)
+        return extension[1:] if len(extension) > 1 else extension
+
     def __unicode__(self):
         return str(self.id)
+
+
+@receiver(post_save, sender=Kredit)
+def kredit_post_init(instance, **kwargs):
+    if instance.doc_complect == Kredit.FIRST_COMPLECT:
+        my_complect = Kredit.COMPLECT1
+    else:
+        my_complect = Kredit.COMPLECT2
+    my_route,res = KreditRoute.objects.get_or_create(
+        kredit=instance,
+        cur_group=Group.objects.get(name=my_complect[0]),
+        next_group=Group.objects.get(name=my_complect[1]),
+        comment=_('New credit was created'),
+        cur_user=instance.user,
+    )
+    my_route.save()
