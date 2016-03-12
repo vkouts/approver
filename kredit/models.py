@@ -16,7 +16,8 @@ from django.dispatch import receiver
 @python_2_unicode_compatible
 class Kredit(models.Model):
     COMPLECT1 = ['kredit_user', 'kredit_approver']
-    COMPLECT2 = ['kredit_user', 'kredit_approver', ['DB_Dagestan', 'DB_Moscow', 'DB_SKFO'], 'kredit_dskp']
+    #COMPLECT2 = ['kredit_user', 'kredit_approver', ['DB_Dagestan', 'DB_Moscow', 'DB_SKFO'], 'kredit_dskp']
+    COMPLECT2 = ['kredit_user', 'kredit_approver', 'kredit_dskp']
 
     FIRST_COMPLECT = '1'
     SECOND_COMPLECT = '2'
@@ -81,14 +82,14 @@ class Kredit(models.Model):
     sess = models.CharField(max_length=64, null=True, blank=True, verbose_name=_('Session'))
 
     def get_cur_route(self):
-        return KreditRoute.objects.filter(kredit=self).order_by('-id').last()
+        return KreditRoute.objects.filter(kredit=self).order_by('id').last()
 
     class Meta:
         verbose_name = _('Kredit')
         verbose_name_plural = _('Kredits')
 
     def __str__(self):
-        return '{surn} {name} {second}'.format(surn=self.surname, name=self.name, second=self.secondname)
+        return '{id} {surn} {name} {second}'.format(id=self.id, surn=self.surname, name=self.name, second=self.secondname)
 
 @python_2_unicode_compatible
 class KreditRoute(models.Model):
@@ -109,8 +110,12 @@ class KreditRoute(models.Model):
     hide_comment = models.BooleanField(verbose_name=_('Hide comment'), default=False)
     session = models.CharField(max_length=64, null=True, blank=True)
 
+    def related_files(self):
+        return SessionFiles.objects.filter(sess=self.session)
+
     def __str__(self):
-        return '{id}_{date}'.format(date=self.creation_date.strftime('%d.%m.%Y %H:%M'), id=self.kredit.id)
+        return '{id}_{route}_{date}'.format(date=self.creation_date.strftime('%d.%m.%Y %H:%M'), route=self.id,
+                                            id=self.kredit.id)
 
     class Meta:
         verbose_name = _('Kredit route')

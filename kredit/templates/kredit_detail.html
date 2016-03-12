@@ -1,4 +1,4 @@
-{% extends 'main_layout.html' %}
+{% extends 'main_view.html' %}
  {% load i18n %}
  {% load staticfiles %}
  {% load perm_checker %}
@@ -86,11 +86,12 @@
         padding-bottom: 5px;
     }
     .my-btn { width: 250px;}
+
     </style>
     {{ form.media }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
     <div style="padding-top:20px;"></div>
     <div class="box-shadow-outer">
         <div class="box-shadow-block">
@@ -165,7 +166,7 @@
                     <ul>
                     {% for file in files %}
                         <li><i class="file-{{ file.extension }}"></i>
-                        <a href="/{{ file.path_to }}">{{ file.path_to.name }}</a></li>
+                        <a href="{{ settings.MEDIA_URL }}{{ file.path_to }}">{{ file.path_to.name }}</a></li>
                     {% endfor %}
                     </ul>
                 </div>
@@ -181,8 +182,13 @@
                         <li class="media" style="border-left: 8px solid {{ route.color }};">
                             <div class="media-body">
                                 <div class="media-heading">{{ route.creation_date }}
-                                    <span style="padding-left: 20px; font-weight: 100;">{{ route.cur_user }}</span></div>
+                                    <span style="padding-left: 20px; font-weight: 100;">{{ route.cur_user.username }}</span></div>
                                 <div style="font-style: italic;">{{ route.comment|safe }}</div>
+                                <ul>
+                                {% for fil in route.related_files %}
+                                    <li><a href="{{ settings.MEDIA_URL }}{{ fil.path_to }}">{{ fil.path_to }}</a></li>
+                                {% endfor %}
+                                </ul>
                             </div>
                         </li>
                         {% endfor %}
@@ -190,10 +196,37 @@
                 </div>
             </div>
 
-            <div class="divider-10"></div>
+
+        {% if not finish %}
+             <div class="divider-10"></div>
             <h4>{% trans "Control" %}</h4>
+        {% if request.user|has_group:object.get_cur_route.next_group.name and not request.user|has_group:object.get_cur_route.cur_group.name %}
+
+         <div class="row">
+                <div class="col-md-12 parent">
+                    <div style="text-align: center">
+                        <div style="display: inline-block; padding-bottom: 20px;">
+                            <form method="post" action="#" id="credTake">
+                                {% csrf_token %}
+                                <input type="submit" name="takeButton" class="btn my-btn" style="font-weight: 600; color: white;  background-color: #d04bff;" value="{% trans 'Take it' %}"  form="credTake" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+         </div>
+        {% else %}
+           <div class="row">
+                <div class="col-md-9">
+                   <form method="post" action="#" id="credComment">
+                       {% csrf_token %}
+                       {{ form.sess }}
+                       {{ form.comment }}
+                   </form>
+               </div>
+           </div>
            <div class="row">
                 <div class="col-md-3">
+                    {% if request.user|has_group:settings.FIRST_LINE_APPROVER %}
                     <div class="btn-group my-control">
                         <button type="button" class="btn btn-default  my-btn dropdown-toggle" data-toggle="dropdown">{% trans 'Transmit' %}
                         <span class="caret"></span></button>
@@ -203,33 +236,42 @@
                             <li><a href="#">ДБ3</a></li>
                         </ul>
                     </div>
-                    
-                    <div class="my-control"><button class="btn btn-danger my-btn"><strong>{% trans 'Decline' %}</strong></button></div>
-                    <div class="my-control"><button class="btn btn-success my-btn"><strong>{% trans 'Accept' %}</strong></button></div>
-                    <div class="my-control"><button class="btn btn-warning my-btn"><strong>{% trans 'Improve' %}</strong></button></div>
+                    {% endif  %}
+
+                    {% if request.user|has_group:settings.FIRST_LINE_APPROVER %}
+                        <div class="my-control">
+                            <input type="submit" name="declineButton" class="btn btn-danger my-btn" style="font-weight: 600;" value="{% trans 'Decline' %}" form="credComment" >
+                        </div>
+                    {% endif %}
+
+                    {% if request.user|has_group:settings.FIRST_LINE_APPROVER %}
+                        <div class="my-control">
+                            <input type="submit" name="acceptButton" class="btn btn-success my-btn" style="font-weight: 600;" value="{% trans 'Accept' %}" form="credComment" >
+                        </div>
+                    {% endif %}
+
+                    {% if request.user|has_group:settings.FIRST_LINE_APPROVER %}
+                    <div class="my-control">
+                        <input type="submit" name="improveButton" class="btn btn-warning my-btn" style="font-weight: 600;" value="{% trans 'Improve' %}" form="credComment" >
+                    </div>
+                    {% endif %}
+
                     <div class="my-control">
                         <input type="submit" name="commentButton" class="btn btn-info my-btn" style="font-weight: 600;" value="{% trans 'Commenting' %}" form="credComment"/>
                     </div>
                 </div>
-
-               <div class="col-md-9">
-                   <form method="post" action="#" id="credComment">
-                       {% csrf_token %}
-                       {{ form.sess }}
-                       {{ form.comment }}
-                   </form>
-               </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="padding-top: 20px;">
                 <div class="col-md-12">
-                   <form method="post" action="#" name="credFiles">
+                   <form method="post" action="#" name="credFiles" class="dropzone" id="my-dropzone">
                        {% csrf_token %}
-
+                        {{ form.sess }}
                    </form>
                 </div>
             </div>
-
+        {% endif %}
+        {% endif %}
 
         </div>
     </div>
@@ -238,9 +280,7 @@
 
 
     <div style="padding-top:20px;"></div>
-{#    {% if request.user|in_group:object.groups %}#}
-{#        kkkkkkkkkkkkk#}
-{#    {% endif %}#}
+
 {% endblock %}
 
 {% block more_scripts %}

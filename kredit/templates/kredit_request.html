@@ -1,12 +1,13 @@
-{% extends 'main_layout.html' %}
+{% extends 'main_view.html' %}
 {% load i18n %}
 
 {% block addhead %}
+    {{ block.super }}
     {{ form.media }}
     {{ form2.media }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
     <div class="row">
         <div class="col-md-12">
             <h3>{% trans "Add new credit request" %}</h3>

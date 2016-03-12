@@ -18,4 +18,3 @@ def in_group(user, groups):
         if im in user.groups.all():
             return True
     return False
-

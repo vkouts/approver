@@ -2,87 +2,130 @@
 {% load i18n %}
 {% load perm_checker %}
 {% block addhead %}
-<style>
-    .main_blk {
-        padding: 30px 30px 10px 30px;
-    }
-    .main_buttons {
-        width: 350px;
-    }
-</style>
+    <style>
+        .main_blk {  padding: 30px 30px 10px 30px;  }
+        .main_buttons {  width: 350px;  }
+    </style>
 {% endblock %}
+
 {% block main %}
     {#  ==================  ЗАГЛАВНОЕ МЕНЮ  ========================== #}
-    {#  ----------  Кредитчику показываем кнопки "Новые кредиты" и "Мои кредиты" ----------  #}
-    {% if request.user|has_group:settings.CREATOR_GROUP %}
-        <div class="row main_blk">
-            <form action="{% url 'kredit_request' %}">
-                <button class="btn btn-lg btn-danger main_buttons" >{% trans "New credit" %}</button>
-            </form>
-        </div>
 
-        <div class="row main_blk">
-            <form action="{% url 'my_kredits' %}">
-                <button class="btn btn-lg btn-primary main_buttons">{% trans "My credits" %}</button>
-            </form>
-        </div>
 
-    {% endif %}
+    <div class="row">
+        <div class="col-md-3" style="padding-top: 30px;">
+            <ul class="nav nav-pills nav-stacked list-group">
+                {#  ----------  Кредитчику показываем кнопки "Новые кредиты" и "Мои кредиты" ----------  #}
+                {% if request.user|has_group:settings.CREATOR_GROUP %}
+                {% url 'kredit_request' as kredit_request %}
+                <li{% ifequal request.path kredit_request %} class="active"{% endifequal %}>
+                    <a href="{{ kredit_request }}"><strong>{% trans "New credit" %}</strong></a>
+                </li>
+                {% url 'my_kredits' settings.CREATOR_GROUP as my_kredits %}
+                <li{% ifequal request.path my_kredits %} class="active"{% endifequal %}>
+                    <a href="{{ my_kredits }}"><strong>{% trans "My credits" %}</strong>
+                    <span class="badge pull-right">{{ my_requests }}</span></a></li>
+                {% endif %}
+
+                {# -------------- Добавляем права просмотра кредитчику с админскими правами всех заявок ---- #}
+                {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}
+                <li><a href="{% url 'kredit_list' %}">{% trans "Common credits queue" %}</a></li>
+                {% endif %}
+                {#  --------------------------------   Согласователям  --------------------------- #}
+                {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
+                {% url 'by_group' settings.FIRST_LINE_APPROVER as new_kreds %}
+                <li{% ifequal request.path new_kreds %} class="active"{% endifequal %}>
+                    <a href="{{ new_kreds }}"><strong>{% trans "New credits" %}</strong>
+                    <span class="badge pull-right">{{ new_requests }}</span></a></li>
+                {% url 'my_kredits' as my_kredits %}
+                <li{% ifequal request.path my_kredits %} class="active"{% endifequal %}>
+                    <a href="{{ my_kredits }}"><strong>{% trans "My reviews" %}</strong></a></li>
+                {% url 'kredit_list' as kredit_list %}
+                <li{% ifequal request.path kredit_list %} class="active"{% endifequal %}>
+                    <a href="{{ kredit_list }}"><strong>{% trans "Total credits queue" %}</strong>
+                    <span class="badge pull-right">{{ all_requests }}</span></a></li>
+                {% endif %}
+                {#  --------------------------------   Права просмотра ДБ   ---------------------------------- #}
+                {% if request.user|is_security_approver %}
+                <li><a href="{% url 'group_kredits' %}">Очередь рассмотрений</a></li>
+                <li><a href="{% url 'list_kredits' %}">Общая очередь кредитных заявок</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+        <div class="col-md-9" style="padding-top: 30px;">{% block content %}{% endblock %}</div>
+    </div>
+
+{##}
+{#    {% if request.user|has_group:settings.CREATOR_GROUP %}#}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'kredit_request' %}">#}
+{#                <button class="btn btn-lg btn-danger main_buttons" >{% trans "New credit" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'my_kredits' %}">#}
+{#                <button class="btn btn-lg btn-primary main_buttons">{% trans "My credits" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#    {% endif %}#}
     {# -------------- Добавляем права просмотра кредитчику с админскими правами всех заявок ---- #}
-    {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}
-        <div class="row main_blk">
-            <form action="{% url 'kredit_list' %}">
-                <button class="btn btn-lg btn-warning main_buttons">{% trans "Common credits queue" %}</button>
-            </form>
-        </div>
-    {% endif %}
+{#    {% if request.user|has_group:settings.ADMIN_CREATOR_GROUP %}#}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'kredit_list' %}">#}
+{#                <button class="btn btn-lg btn-warning main_buttons">{% trans "Common credits queue" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    {% endif %}#}
     {#  --------------------------------   Согласователям  --------------------------- #}
-    {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}
-        <div class="row main_blk">
-            <form action="{% url 'by_group' 'kredit_approver' %}">
-                <button class="btn btn-lg btn-primary main_buttons">{% trans "New credits" %}</button>
-            </form>
-        </div>
-
-        <div class="row main_blk">
-            <form action="{% url 'my_kredits' %}">
-                <button class="btn btn-lg btn-info main_buttons">{% trans "My reviews" %}</button>
-            </form>
-        </div>
-
-        <div class="row main_blk">
-            <form action="{% url 'kredit_list' %}">
-                <button class="btn btn-lg btn-warning main_buttons">{% trans "Total credits queue" %}</button>
-            </form>
-        </div>
-
-    {% endif %}
-
+{#    {% if  request.user|has_group:settings.FIRST_LINE_APPROVER or request.user|has_group:settings.SECOND_LINE_APPROVER %}#}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'by_group' 'kredit_approver' %}">#}
+{#                <button class="btn btn-lg btn-primary main_buttons">{% trans "New credits" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'my_kredits' %}">#}
+{#                <button class="btn btn-lg btn-info main_buttons">{% trans "My reviews" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'kredit_list' %}">#}
+{#                <button class="btn btn-lg btn-warning main_buttons">{% trans "Total credits queue" %}</button>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#    {% endif %}#}
+{##}
     {#  --------------------------------   Права просмотра ДБ   ---------------------------------- #}
-    {% if request.user|is_security_approver %}
-        <div class="row main_blk">
-            <form action="{% url 'group_kredits' %}">
-                <button class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>
-            </form>
-        </div>
-        <div class="row main_blk">
-            <form action="{% url 'list_kredits' %}">
-                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>
-            </form>
-        </div>
-    {% endif %}
+{#    {% if request.user|is_security_approver %}#}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'group_kredits' %}">#}
+{#                <button class="btn btn-lg btn-primary main_buttons">Очередь рассмотрений</button>#}
+{#            </form>#}
+{#        </div>#}
+{#        <div class="row main_blk">#}
+{#            <form action="{% url 'list_kredits' %}">#}
+{#                <button class="btn btn-lg btn-warning main_buttons">Общая очередь кредитных заявок</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    {% endif %}#}
     {#  --------------------------------   Права просмотра статистики  --------------------------- #}
-    {% if request.user|has_group:settings.MASTER_APPROVER %}
-        <div class="row main_blk">
-            <form action="/stats/approvers/">
-                <button class="btn btn-lg btn-black main_buttons">Статистика по пользователям</button>
-            </form>
-        </div>
-    {% endif %}
+{#    {% if request.user|has_group:settings.MASTER_APPROVER %}#}
+{#        <div class="row main_blk">#}
+{#            <form action="/stats/approvers/">#}
+{#                <button class="btn btn-lg btn-black main_buttons">Статистика по пользователям</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    {% endif %}#}
     {#  --------------------------------   Тут блок для безопасников  --------------------------- #}
-    {% if request.user|is_security_approver %}
-
-
-    {% endif %}
+{#    {% if request.user|is_security_approver %}#}
+{##}
+{##}
+{#    {% endif %}#}
 
 {% endblock %}

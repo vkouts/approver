@@ -18,13 +18,29 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.core.urlresolvers import reverse_lazy, reverse
 
-class KreditList(LoginRequiredMixin, SettingsToContext, ListView):
+class BagesMixin(View):
+
+    def get_context_data(self, **kwargs):
+        context = super(BagesMixin, self).get_context_data(**kwargs)
+        if Group.objects.get(name=settings.ADMIN_APPROVER) in self.request.user.groups.all() or \
+            Group.objects.get(name=settings.FIRST_LINE_APPROVER) in self.request.user.groups.all() or \
+            Group.objects.get(name=settings.SECOND_LINE_APPROVER) in self.request.user.groups.all():
+            context['all_requests'] = Kredit.objects.all().count()
+            context['new_requests'] = Kredit.objects.filter(
+                groups__name=settings.FIRST_LINE_APPROVER
+            ).filter(status__in=[Kredit.STATUS_NEW, Kredit.STATUS_DONE]).count()
+        elif Group.objects.get(name=settings.CREATOR_GROUP) in self.request.user.groups.all():
+            context['my_requests'] = Kredit.objects.filter(user=self.request.user).count()
+        return context
+
+
+class KreditList(LoginRequiredMixin, SettingsToContext, BagesMixin, ListView):
     template_name = 'kredit_list.html'
     model = Kredit
     paginate_by = settings.UNITS_PER_PAGE
 
 
-class KreditDetail(LoginRequiredMixin,  SingleObjectMixin, FormView):
+class KreditDetail(LoginRequiredMixin,  SingleObjectMixin, SettingsToContext, BagesMixin, FormView):
     template_name = 'kredit_detail.html'
     model = Kredit
     form_class = KreditControlForm
@@ -39,35 +55,90 @@ class KreditDetail(LoginRequiredMixin,  SingleObjectMixin, FormView):
         context['routes'] = KreditRoute.objects.filter(kredit=self.object).order_by('id')
         context['settings'] = settings
         context['form'] = KreditControlForm(initial={'sess': my_sess})
+        if self.object.status in (Kredit.STATUS_DISCARD, Kredit.STATUS_APPROVE):
+            context['finish'] = True
+        else:
+            context['finish'] = False
         return context
 
     def post(self, request, *args, **kwargs):
+        if request.FILES:
+            my_file = SessionFiles(path_to=request.FILES.get('file'), sess=request.POST.get('sess'))
+            my_file.save()
+
+
         self.object = self.get_object()
         prev_route = self.object.get_cur_route()
-        print request.POST
-        print request.POST['commentButton']
-        my_route = KreditRoute.objects.create(
-            color='#32c8de',
-            kredit=self.object,
-            stage=prev_route.stage,
-            prev_group=prev_route.prev_group,
-            cur_group=prev_route.cur_group,
-            next_group=prev_route.next_group,
-            cur_user=request.user,
-            comment=request.POST.get('comment', ''),
-            session=request.POST.get('sess', '')
-        )
-        my_route.save()
+
+        # Просто комментарий
+        if 'commentButton' in request.POST.keys():
+            my_route = KreditRoute.objects.create(
+                color='#32c8de',
+                kredit=self.object,
+                stage=prev_route.stage,
+                prev_group=prev_route.prev_group,
+                cur_group=prev_route.cur_group,
+                next_group=prev_route.next_group,
+                cur_user=request.user,
+                comment=request.POST.get('comment', ''),
+                session=request.POST.get('sess', '')
+            )
+            my_route.save()
+        elif 'takeButton' in request.POST.keys():
+            my_route = KreditRoute.objects.create(
+                color='#32c8de',
+                kredit=self.object,
+                stage=prev_route.stage,
+                prev_group=prev_route.cur_group,
+                cur_group=prev_route.next_group,
+                next_group=prev_route.next_group,
+                cur_user=request.user,
+                blinded_comment=_('User from group %s take credit for review') % prev_route.next_group.name,
+                comment=_('User %s take credit for review') % request.user.get_full_name(),
+                session=request.POST.get('sess', '')
+            )
+            my_route.save()
+        elif 'improveButton' in request.POST.keys():
+            pass
+        elif 'acceptButton' in request.POST.keys():
+            if self.object.doc_complect == self.object.FIRST_COMPLECT:
+                self.object.status = self.object.STATUS_APPROVE
+                my_route = KreditRoute.objects.create(
+                    color='#5cb85c',
+                    kredit=self.object,
+                    stage=0,
+                    prev_group=prev_route.cur_group,
+                    cur_group=prev_route.cur_group,
+                    next_group=prev_route.next_group,
+                    cur_user=request.user,
+                    comment=request.POST.get('comment', ''),
+                    session=request.POST.get('sess', '')
+                )
+                my_route.save()
+                self.object.save(update_fields=['status'])
+        elif 'declineButton' in request.POST.keys():
+            if self.object.doc_complect == self.object.FIRST_COMPLECT:
+                self.object.status = self.object.STATUS_DISCARD
+                my_route = KreditRoute.objects.create(
+                    color='#d9534f',
+                    kredit=self.object,
+                    stage=0,
+                    prev_group=prev_route.cur_group,
+                    cur_group=prev_route.cur_group,
+                    next_group=prev_route.next_group,
+                    cur_user=request.user,
+                    comment=request.POST.get('comment', ''),
+                    session=request.POST.get('sess', '')
+                )
+                my_route.save()
+                self.object.save(update_fields=['status'])
         return super(KreditDetail, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('kredit_detail', kwargs={'pk': self.object.pk})
 
 
-
-
-
-class KreditRequest(LoginRequiredMixin, CreateView):
+class KreditRequest(LoginRequiredMixin, SettingsToContext, BagesMixin, CreateView):
     template_name = 'kredit_request.html'
     model = Kredit
     form_class = KreditForm
@@ -104,11 +175,18 @@ class KreditRequest(LoginRequiredMixin, CreateView):
         return super(KreditRequest, self).post(request, *args, **kwargs)
 
 
-class MyKredits(LoginRequiredMixin, TemplateView):
-    template_name = 'my_kredits.html'
+class MyKredits(LoginRequiredMixin, SettingsToContext, BagesMixin, ListView):
+    template_name = 'kredit_list.html'
+    model = Kredit
+
+    def get_queryset(self):
+        qs = None
+        if self.kwargs.get('group', '') == settings.CREATOR_GROUP:
+            qs = self.model.objects.filter(user=self.request.user)
+        return qs
 
 
-class SearchKredit(LoginRequiredMixin, ListView):
+class SearchKredit(LoginRequiredMixin, SettingsToContext, BagesMixin, ListView):
     model = Kredit
     template_name = 'kredit_list.html'
     paginate_by = settings.UNITS_PER_PAGE
@@ -121,11 +199,11 @@ class SearchKredit(LoginRequiredMixin, ListView):
             my_creds = self.model.objects.filter(Q(name__istartswith=search_str)|Q(surname__istartswith=search_str))
         return my_creds
 
-class GroupKredits(LoginRequiredMixin, ListView):
+class GroupKredits(LoginRequiredMixin, SettingsToContext, BagesMixin, ListView):
     template_name = 'kredit_list.html'
     model = Kredit
 
     def get_queryset(self):
         my_group = self.kwargs.get('group')
-        return self.model.objects.filter(groups__name=my_group)
+        return self.model.objects.filter(groups__name=my_group).filter(status__in=[Kredit.STATUS_NEW, Kredit.STATUS_DONE])
 

@@ -149,6 +149,7 @@
     .page-wrapper {
         min-height: 100%;
         margin-bottom: -50px;
+        padding-bottom: 50px;
     }
     * html .page-wrapper {
         height: 100%;
@@ -156,8 +157,9 @@
     .page-buffer {
         height: 50px;
     }
-    footer {
+    .footer {
         background-color: #666666;
+
     }
       .muted {
     color: #ffffff;

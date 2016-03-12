@@ -221,3 +221,6 @@ msgstr "Отправить на доработку"
 
 msgid "Commenting"
 msgstr "Комментировать"
+
+msgid "Take it"
+msgstr "Взять в рассмотрение"

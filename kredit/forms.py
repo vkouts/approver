@@ -68,3 +68,11 @@ class KreditControlForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(KreditControlForm, self).__init__(*args, **kwargs)
         self.fields['sess'].required = True
+
+    class Media:
+        css = {'all': (
+            'css/dropzone.css',
+        )}
+        js = (
+            'js/dropzone.js',
+        )

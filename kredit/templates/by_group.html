@@ -1,14 +1,13 @@
-{% extends 'main_layout.html' %}
-
+{% extends 'main_view.html' %}
+{% load perm_checker %}
 {% block addhead %}
-
+    {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
     {% for kredit in object_list %}
         {{ kredit.id }}
     {% endfor %}
-
 {% endblock %}
 
 {% block more_scripts %}

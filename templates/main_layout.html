@@ -9,11 +9,13 @@
       <title>Система согласования и одобрения кредитов</title>
         {% load staticfiles %}
       <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'semantic/semantic.min.css' %}" rel="stylesheet" media="screen">
 
       <link href="{% static 'css/style.css' %}" rel="stylesheet" media="screen">
       <link href="{% static 'js/jquery_ui/jquery-ui.css' %}" rel="stylesheet" type="text/css" media="all" />
       <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
       <script src="{% static 'js/jquery_ui/jquery-ui.js' %}"></script>
+      <script src="{% static 'semantic/semantic.min.js' %}"></script>
 
       {% block addhead %}{% endblock %}
    </head>
@@ -50,16 +52,19 @@
 
 
 
-    <div class="container" style="min-height: 550px; ">
+    <div class="container page-wrapper" style="min-height: 550px; ">
     {% block main %}{% endblock %}
     </div>
-    <div class="page-buffer"></div>
+
     </div>
-    <footer style="padding: 0px 0px 10px 0px; height: 50px;">
-        <div class="container">
-            <p class="muted credit" style="padding-top: 18px;"><a href="http://ec-bank.ru" style="color: #82ACD0;">ЕВРОКОММЕРЦ БАНК</a> &copy; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Департамент ДИТ 2015 г.</p>
+
+    <div class="footer">
+        <hr/>
+        <div class="container" style="padding-bottom: 20px;">
+            <p class="muted credit"><a href="http://ec-bank.ru" style="color: #82ACD0;">
+                ЕВРОКОММЕРЦ БАНК</a> &copy; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Департамент ДИТ 2015 г.</p>
         </div>
-    </footer>
+    </div>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     {% block more_scripts %}{% endblock %}
 </body>
