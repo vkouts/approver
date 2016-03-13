@@ -178,6 +178,7 @@ class KreditRequest(LoginRequiredMixin, SettingsToContext, BagesMixin, CreateVie
 class MyKredits(LoginRequiredMixin, SettingsToContext, BagesMixin, ListView):
     template_name = 'kredit_list.html'
     model = Kredit
+    paginate_by = settings.UNITS_PER_PAGE
 
     def get_queryset(self):
         qs = None

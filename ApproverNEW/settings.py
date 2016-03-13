@@ -223,7 +223,7 @@ LOGGING = {
     }
  }
 
-UNITS_PER_PAGE = 25
+UNITS_PER_PAGE = 15
 
 CREATOR_GROUP = 'kredit_user'
 ADMIN_CREATOR_GROUP = 'kredit_admin'

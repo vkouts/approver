@@ -85,6 +85,7 @@ class Kredit(models.Model):
         return KreditRoute.objects.filter(kredit=self).order_by('id').last()
 
     class Meta:
+        ordering = ['-id']
         verbose_name = _('Kredit')
         verbose_name_plural = _('Kredits')
 
