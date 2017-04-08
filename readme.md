@@ -40,3 +40,22 @@
 
 Пример интерфейса согласователя:  
 ![Imgur](http://i.imgur.com/kNOgPeg.png)
+
+
+Начало работы
+=============
+
+```
+# установить зависимости
+pip install -r requirements.txt
+# инициализировать базу
+python manage.py migrate
+# создать суперпользователя
+python manage.py createsuperuser
+# загрузить первоначальные данные
+python manage.py loaddata initial
+```
+
+Зайти в админку и добавить пользователей:
+Для кредитчика - создать пользователя и добавить в группу **kredit_user**
+Для сотрудника одобряющего кредиты - добавить в группу **kredit_approver**

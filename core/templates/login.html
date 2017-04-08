@@ -1,0 +1,54 @@
+{% extends 'main_layout.html' %}
+
+{% block addhead %}
+    <style>
+        label[for='id_username'] {
+            width: 160px;
+        }
+        label[for='id_password'] {
+            width: 160px;
+        }
+        .login_form button[type='submit'] {
+            color: #fff;
+            margin-left: 160px;
+            background-color: #5bc0de;
+            border-color: #46b8da;
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="row" style="padding-top: 200px;">
+            <div class="col-md-5 col-md-offset-3">
+                <form action="" method="post" class="login_form">
+                  {% csrf_token %}
+                  <!-- as_p для того, чтобы каждый элемент формы был с новой строки -->
+                  {{ form.as_p }}
+                  <button type="submit">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
