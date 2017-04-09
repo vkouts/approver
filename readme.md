@@ -36,10 +36,10 @@
  - возможность подключения модулей кредитного калькулятора
  
 Примеры интерфейса кредитчика  
-![Imgur](./master/data/img/screen01.png)
+![screen01](https://cloud.githubusercontent.com/assets/3579402/24835712/8188774e-1d11-11e7-89b9-68e929f1a2ed.png)
 
 Пример интерфейса согласователя:  
-![Imgur](./master/data/img/screen02.png)
+![screen02](https://cloud.githubusercontent.com/assets/3579402/24835713/847d14e6-1d11-11e7-850d-fbc32e4581e9.png)
 
 
 Начало работы
