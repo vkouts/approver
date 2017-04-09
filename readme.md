@@ -36,10 +36,10 @@
  - возможность подключения модулей кредитного калькулятора
  
 Примеры интерфейса кредитчика  
-![Imgur](http://i.imgur.com/DPYhyNt.png)
+![Imgur](../data/img/screen01.png)
 
 Пример интерфейса согласователя:  
-![Imgur](http://i.imgur.com/kNOgPeg.png)
+![Imgur](../data/img/screen02.png)
 
 
 Начало работы
