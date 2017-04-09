@@ -36,10 +36,10 @@
  - возможность подключения модулей кредитного калькулятора
  
 Примеры интерфейса кредитчика  
-![Imgur](../data/img/screen01.png)
+![Imgur](https://github.com/vkouts/approver/blob/master/data/img/screen01.png)
 
 Пример интерфейса согласователя:  
-![Imgur](../data/img/screen02.png)
+![Imgur](https://github.com/vkouts/approver/blob/master/data/img/screen02.png)
 
 
 Начало работы
